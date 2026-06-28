@@ -1,0 +1,60 @@
+{% extends "interagent/base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Monitored Chat Sessions</h2>
+    {% if monitored_chats %}
+        {% for session, chats in monitored_chats.items %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <strong>User:</strong> {{ session.user.username }}<br>
+                    <strong>Started:</strong> {{ session.start_time|date:"Y-m-d H:i:s" }}<br>
+                    <strong>Status:</strong> 
+                    {% if session.is_active %}
+                        <span class="badge bg-success">Active</span>
+                    {% else %}
+                        <span class="badge bg-secondary">Ended: {{ session.end_time|date:"Y-m-d H:i:s" }}</span>
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    <div class="chat-messages">
+                        {% for chat in chats %}
+                            <div class="message {% if chat.sender == 'bot' %}bot-message{% else %}user-message{% endif %}">
+                                <strong>{{ chat.sender|title }}:</strong>
+                                <span class="message-time text-muted">{{ chat.timestamp }}</span><br>
+                                {{ chat.message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="alert alert-info">No monitored chat sessions found.</div>
+    {% endif %}
+</div>
+
+<style>
+    .chat-messages {
+        max-height: 400px;
+        overflow-y: auto;
+    }
+    .message {
+        margin-bottom: 15px;
+        padding: 10px;
+        border-radius: 5px;
+    }
+    .user-message {
+        background-color: #f8f9fa;
+        margin-left: 20px;
+    }
+    .bot-message {
+        background-color: #e9ecef;
+        margin-right: 20px;
+    }
+    .message-time {
+        font-size: 0.8em;
+        float: right;
+    }
+</style>
+{% endblock %}
